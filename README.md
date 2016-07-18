@@ -27,7 +27,6 @@ CACHES = {
             'PARSER_CLASS': 'redis.connection.HiredisParser',
             'REDIS_SECRET_KEY': 'kPEDO_pSrPh3qGJVfGAflLZXKAh4AuHU64tTlP-f_PY=',
             'CLIENT_CLASS': 'secure-redis.client.SecureDjangoRedisClient',
-            'SERIALIZER': 'secure-redis.serializer.SecureSerializer',
             'DATA_RECOVERY': {
                 'OLD_KEY_PREFIX': 'app1',
                 'OLD_CACHE_NAME': 'unsafe_redis',
