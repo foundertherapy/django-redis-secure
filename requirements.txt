@@ -1,0 +1,5 @@
+django-redis
+cryptography
+Django==1.9.6
+hiredis
+mock
