@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 
-from cryptography.fernet import Fernet
-
 import django.test
 from django.core import cache
 
