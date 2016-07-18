@@ -6,7 +6,7 @@ import os
 from setuptools import setup, find_packages
 
 
-with open('secure-redis/__init__.py', 'r') as init_file:
+with open('secure_redis/__init__.py', 'r') as init_file:
     version = re.search('^__version__ = [\'"]([^\'"]+)[\'"]', init_file.read(), re.MULTILINE).group(1)
 
 # allow setup.py to be run from any path
