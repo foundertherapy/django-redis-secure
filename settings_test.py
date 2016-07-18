@@ -19,7 +19,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.sessions',
-    'secure-redis',
+    'secure_redis',
 )
 
 DATABASES = {
@@ -57,7 +57,7 @@ CACHES = {
             'DB': REDIS_DB,
             'PARSER_CLASS': 'redis.connection.HiredisParser',
             'REDIS_SECRET_KEY': 'kPEDO_pSrPh3qGJVfGAflLZXKAh4AuHU64tTlP-f_PY=',
-            'CLIENT_CLASS': 'secure-redis.client.SecureDjangoRedisClient',
+            'CLIENT_CLASS': 'secure_redis.client.SecureDjangoRedisClient',
             'DATA_RECOVERY': {
                 'OLD_KEY_PREFIX': 'register',
                 'OLD_CACHE_NAME': 'unsafe_redis',

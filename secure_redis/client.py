@@ -10,7 +10,7 @@ class UnsupportedOperation(Exception):
 class SecureDjangoRedisClient(django_redis.client.default.DefaultClient):
     def __init__(self, server, params, backend):
         options = params.get("OPTIONS", {})
-        options['SERIALIZER'] = 'secure-redis.serializer.SecureSerializer'
+        options['SERIALIZER'] = 'secure_redis.serializer.SecureSerializer'
         params['OPTIONS'] = options
         super(SecureDjangoRedisClient, self).__init__(server, params, backend)
 
