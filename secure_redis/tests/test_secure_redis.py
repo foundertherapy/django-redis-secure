@@ -27,5 +27,5 @@ class SecureRedisTestCase(django.test.TestCase):
         self.assertNotEqual(encVal, original_val)
 
         get_method.return_value = encVal
-        got_value = redis_cache.get('val')
-        self.assertEqual(original_val, got_value)
+        decrypted_value = redis_cache.get('val')
+        self.assertEqual(original_val, decrypted_value)

@@ -9,7 +9,6 @@ class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
     def __init__(self, options):
         super(SecureSerializer, self).__init__(options)
         param_key = options.get("REDIS_SECRET_KEY")
-        assert param_key
         key = param_key.encode("utf-8")
         self.crypter = Fernet(key)
 

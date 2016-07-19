@@ -23,8 +23,6 @@ class Migration(migrations.Migration):
 
         old_key_prefix = recovery_settings.get('OLD_KEY_PREFIX')
         old_cache_name = recovery_settings.get('OLD_CACHE_NAME')
-        assert old_key_prefix
-        assert old_cache_name
 
         old_cache = cache.caches[old_cache_name]
         new_cache = cache.caches[cache_name]

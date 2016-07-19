@@ -29,7 +29,7 @@ CACHES = {
             'CLIENT_CLASS': 'secure_redis.client.SecureDjangoRedisClient',
             'DATA_RECOVERY': {
                 'OLD_KEY_PREFIX': 'app1',
-                'OLD_CACHE_NAME': 'unsafe_redis',
+                'OLD_CACHE_NAME': 'insecure',
                 'CLEAR_OLD_ENTRIES': False,
             }
 
@@ -37,7 +37,7 @@ CACHES = {
         'KEY_PREFIX': 'app1:secure',
         'TIMEOUT': 60 * 60 * 24,  # 1 day
     },
-    'unsafe_redis': {
+    'insecure': {
         'BACKEND': 'django_redis.cache.RedisCache',
         'LOCATION': REDIS_URL,
         'OPTIONS': {
