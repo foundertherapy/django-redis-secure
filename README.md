@@ -1,19 +1,19 @@
 # Django secure redis
-This library provides extra option for django-redis library, in which it provides a secure layer on the top of redis cache
+Django caching plugin for django-redis that adds a Serializer class and configuration to support transparent,
+symmetrical encryption of cached values using the python cryptography library
+
+# Important
+Before using this library, make sure that you really need it. By using it, put in mind:
+- You are loosing atomic functionalities like `incr()`
+- The values stored to redis are now bigger
+- Will take more time to set and retrieve data from redis
 
 # Installation
 1. Use `pip install` to get this library
 2. In `settings.py` in your project, go to `CACHE` settings and ensure you put the following:
  * Add `secure_redis` to `INSTALLED_APPS`
  * Provide `REDIS_SECRET_KEY` to be used in the encryption
- * Let `CLIENT_CLASS` to use `secure_redis.client.SecureDjangoRedisClient`
- * If you already have existing data and you don't want to loose them (if you don't just skip this point), basiclly, when you need to add new cache configuration which is related to secure redis configuration, and keep the old configration (you MUST keep `KEY_PREFIX` as it is) so it can be used to read the old values - please note that you need to make sure that the two cache configuration point at the same redis db.
-   * Add `DJANGO_REDIS_SECURE_CACHE_NAME` and let it equal to the new secure cache configuration. The default value for this is `default`
-   * Add `DATA_RECOVERY` in which it holds
-     * `OLD_KEY_PREFIX` which is the old cache prefix used in previous configutation
-     * `OLD_CACHE_NAME` which is the old cache configuration
-     * `CLEAR_OLD_ENTRIES` should delete old key/values.
-3. Run `python manage.py migrate` to perform the data migration from old cache to new encrypted cache.
+ * Let `SERIALIZER` to use `secure_redis.serializer.SecureSerializer`
 
 # Settings sample
 ```
@@ -26,13 +26,7 @@ CACHES = {
             'DB': REDIS_DB,
             'PARSER_CLASS': 'redis.connection.HiredisParser',
             'REDIS_SECRET_KEY': 'kPEDO_pSrPh3qGJVfGAflLZXKAh4AuHU64tTlP-f_PY=',
-            'CLIENT_CLASS': 'secure_redis.client.SecureDjangoRedisClient',
-            'DATA_RECOVERY': {
-                'OLD_KEY_PREFIX': 'app1',
-                'OLD_CACHE_NAME': 'insecure',
-                'CLEAR_OLD_ENTRIES': False,
-            }
-
+            'SERIALIZER': 'secure_redis.serializer.SecureSerializer',
         },
         'KEY_PREFIX': 'app1:secure',
         'TIMEOUT': 60 * 60 * 24,  # 1 day
@@ -48,16 +42,44 @@ CACHES = {
         'KEY_PREFIX': 'app1',
         'TIMEOUT': 60 * 60 * 24,  # 1 day
     },
-    'staticfiles': {
-        'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': REDIS_URL,
-        'OPTIONS': {
-            # "SOCKET_CONNECT_TIMEOUT": 5,  # in seconds
-            'DB': REDIS_DB,
-            'PARSER_CLASS': 'redis.connection.HiredisParser',
-        },
-        'KEY_PREFIX': 'sf',
-        'TIMEOUT': 60 * 60 * 24 * 180,  # 180 days
-    },
 }
+```
+# Data migration
+If you already have an existing data in your redis, you might need to consider data migration for un-encrypted values,
+you are free to handle this case as you want, we would suggest to use django management command to handle this case:
+
+1. Keep old redis cache settings and add your new secure django redis cache configuration
+2. Make sure your new secure django redis cache settings has different `KEY_PREFIX`
+3. Make sure old configutation still point at the correct `REDIS_URL` and `REDIS_DB`
+4. You can see an example configuration in the previous section of `Settings sample`
+5. Make sure either to delete old keys or make sure your redis can holds the new values
+6. Code sinppet for sample command is shown below:
+```
+from __future__ import unicode_literals
+
+from django.core.management.base import BaseCommand
+from django.core import cache
+
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        new_cache_name = 'default'
+        old_cache_name = 'insecure'
+        old_key_prefix = 'app1'
+        new_prefix = 'app1:secure'
+        delete_old_keys = False
+
+        old_cache = cache.caches[old_cache_name]
+        new_cache = cache.caches[new_cache_name]
+
+        # Use low level api to access full key name
+        existing_keys = old_cache.client.get_client().keys('{}*'.format(old_key_prefix))
+        for key in existing_keys:
+            if new_prefix not in key:
+                actual_key = old_cache.client.reverse_key(key)
+                unencrypted_val = old_cache.get(actual_key)
+                if new_cache.set(actual_key, unencrypted_val):
+                    if delete_old_keys:
+                        old_cache.delete(actual_key)
+
 ```

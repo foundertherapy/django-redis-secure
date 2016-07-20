@@ -19,10 +19,11 @@ setup(
     # license='MIT License',
     # include_package_data=True,
     description=(
-        'Django redis client and serializer to ensure data encreption and providing more data security.'
+        'Django caching plugin for django-redis that adds a Serializer class and configuration to support transparent, '
+        'symmetrical encryption of cached values using the python cryptography library'
     ),
-    url='https://github.com/foundertherapy/django-users-plus/',
-    download_url='https://github.com/foundertherapy/django-users-plus/archive/1.0.0.tar.gz',
+    url='https://github.com/foundertherapy/django-redis-secure/',
+    download_url='https://github.com/foundertherapy/django-redis-secure/archive/1.0.0.tar.gz',
     author='Ghaleb Khaled',
     author_email='ghaleb@foundertherapy.co',
     install_requires=[
