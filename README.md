@@ -13,7 +13,7 @@ Before using this library, make sure that you really need it. By using it, put i
 2. In `settings.py` in your project, go to `CACHE` settings and ensure you put the following:
  * Add `secure_redis` to `INSTALLED_APPS`
  * Provide `REDIS_SECRET_KEY` to be used in the encryption
- * Let `SERIALIZER` to use `secure_redis.serializer.SecureSerializer`
+ * Configure the `SERIALIZER` setting to use `secure_redis.serializer.SecureSerializer`
 
 # Settings sample
 ```
