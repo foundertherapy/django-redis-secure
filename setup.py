@@ -30,6 +30,9 @@ setup(
         'Django>=1.9.6',
         'cryptography>=1.4',
         'django-redis==4.4.3',
+        'django-rq==0.9.1',
+        'rq==0.6.0',
+        'rq-scheduler==0.6.1',
     ],
     keywords=['redis', 'django', 'secure', 'encryption', 'cache'],
 )

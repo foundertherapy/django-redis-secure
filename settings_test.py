@@ -61,3 +61,19 @@ CACHES = {
         'TIMEOUT': 60 * 60 * 24,  # 1 day
     },
 }
+
+
+RQ_QUEUES = {
+    'default': {
+        'USE_REDIS_CACHE': 'default',
+        'DEFAULT_TIMEOUT': 600,
+    },
+    'automation': {
+        'USE_REDIS_CACHE': 'default',
+        'DEFAULT_TIMEOUT': 600,
+    },
+}
+
+RQ_SCHEDULER_ENABLED = False
+for q in RQ_QUEUES.itervalues():
+    q['ASYNC'] = False
