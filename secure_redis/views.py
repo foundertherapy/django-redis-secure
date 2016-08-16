@@ -16,7 +16,17 @@ from rq.registry import (DeferredJobRegistry, FinishedJobRegistry,
 
 from django_rq.queues import get_connection, get_queue_by_index
 from django_rq.settings import QUEUES_LIST
-from secure_redis import get_serializer
+from . import settings
+
+_serializer = None
+
+
+def get_serializer():
+    global _serializer
+    if not _serializer:
+        from . import serializer
+        _serializer = serializer.SecureSerializer(settings.get_secure_cache_opts())
+    return _serializer
 
 
 def use_actual_name(job):
