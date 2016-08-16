@@ -12,18 +12,10 @@ import django_rq
 from django_rq.queues import get_queue
 from rq.defaults import DEFAULT_RESULT_TTL
 from rq.queue import Queue
-from . import settings, serializer
+from secure_redis import get_serializer
 
 
-_serializer = None
 logger = logging.getLogger(__name__)
-
-
-def get_serializer():
-    global _serializer
-    if not _serializer:
-        _serializer = serializer.SecureSerializer(settings.get_secure_cache_opts())
-    return _serializer
 
 
 def execute(method_name, *args, **kwargs):
