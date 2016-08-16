@@ -27,7 +27,7 @@ setup(
     author='Ghaleb Khaled',
     author_email='ghaleb@foundertherapy.co',
     install_requires=[
-        'Django>=1.9.6',
+        'Django==1.9.6',
         'cryptography>=1.4',
         'django-redis==4.4.3',
         'django-rq==0.9.1',

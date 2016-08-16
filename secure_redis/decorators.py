@@ -69,7 +69,7 @@ def rq_job(func_or_queue, connection=None, *args, **kwargs):
                 else:
                     queue = self.queue
                 depends_on = kwargs.pop('depends_on', None)
-                f_name = '{}.{}'.format(func_or_queue.__module__, func_or_queue.__name__)
+                f_name = '{}.{}'.format(f.__module__, f.__name__)
                 args2 = [get_serializer().dumps(f_name)]
                 args2 += [get_serializer().dumps(args)]
 
@@ -80,7 +80,7 @@ def rq_job(func_or_queue, connection=None, *args, **kwargs):
 
             @wraps(f)
             def enqueue_at(target_date, scheduler_name='default', *args, **kwargs):
-                f_name = '{0}.{1}'.format(func_or_queue.__module__, func_or_queue.__name__)
+                f_name = '{0}.{1}'.format(f.__module__, f.__name__)
                 args2 = [get_serializer().dumps(f_name)]
                 args2 += [get_serializer().dumps(args)]
 
