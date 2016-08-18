@@ -91,3 +91,6 @@ You can use some extra functionality provided by this plugin, if secure cache se
 1. `delay` method, so you can use it like `my_job.delay()`. This method is same as `django_rq.job.delay`
 2. `enqueue_at` method, called as `my_job.enqueue_at()`. This is an exposed method of `django_rq.Scheduler.enqueue_at`
 3. `schedule_once` method, called as `my_job.schedule_once()`. Same as `django_rq.Scheduler.schedule` but will check if method already exists so it will not added twice.
+
+## Important:
+When using `secure_redis.rq_job` decorator, this will direct your method to a proxy method which will result in changing method name in admin page, so if you want to see the actual method name, you can use `secure_redis.urls` instead of `django_rq.urls`, this will take care of displaying actual method name.

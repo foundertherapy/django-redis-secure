@@ -1,31 +1,23 @@
-from __future__ import (absolute_import, division, print_function,
-                        unicode_literals)
+from __future__ import (division, unicode_literals)
 from functools import wraps
 from collections import defaultdict
 import logging
 import datetime
 
 from django.conf import settings as global_settings
+
 import rq.utils
 from rq.compat import string_types
 import django_rq
 from django_rq.queues import get_queue
 from rq.defaults import DEFAULT_RESULT_TTL
 from rq.queue import Queue
-from . import settings
+
+from .serializer import default_secure_serializer as secure_serializer
+
 
 logger = logging.getLogger(__name__)
 
-
-_serializer = None
-
-
-def get_serializer():
-    global _serializer
-    if not _serializer:
-        from . import serializer
-        _serializer = serializer.SecureSerializer(settings.get_secure_cache_opts())
-    return _serializer
 
 
 def execute(method_name, *args, **kwargs):
@@ -33,18 +25,25 @@ def execute(method_name, *args, **kwargs):
 
 
 def secure_job_proxy(*args, **kwargs):
-    args2 = list(args)
-    f_name = get_serializer().loads(args2.pop(0))
-    args = list(get_serializer().loads(args2.pop(0)))
-    kwargs = get_serializer().loads(args2.pop())
-    return execute(f_name, *args, **kwargs)
+    """
+    The is a proxy method, each method wanted to be stored securely, it will be directed to this method. With first
+    argument is the encrypted original method name.
+    :param args: Always three parameters, first is the encrypted method name, second is the encrypted actual args,
+    thid is the encrypted actual kwargs
+    :return: actual method return value
+    """
+    actual_function_name = secure_serializer.loads(args[0])
+    decrypted_args = secure_serializer.loads(args[1])
+    kwargs = secure_serializer.loads(args[2])
+    return execute(actual_function_name, *decrypted_args, **kwargs)
 
 
 def rq_job(func_or_queue, connection=None, *args, **kwargs):
     class _rq_job(object):
         def __init__(self, queue, connection=None, timeout=None,
                      result_ttl=DEFAULT_RESULT_TTL, ttl=None):
-            """A decorator that adds a ``delay`` method to the decorated function,
+            """A decorator that adds :
+            ``delay`` method to the decorated function,
             which in turn creates a RQ job when called. Accepts a required
             ``queue`` argument that can be either a ``Queue`` instance or a string
             denoting the queue name.  For example:
@@ -54,6 +53,13 @@ def rq_job(func_or_queue, connection=None, *args, **kwargs):
                     return x + y
 
                 simple_add.delay(1, 2) # Puts simple_add function into queue
+
+            ``enqueue_at`` method, which creates RQ job to be executed in the specified argument date. ``enqueue_at``
+            method take the ``target_date`` as first argument, ``scheduler_name`` as second argument optional argument,
+            the later argument is used to specify which ``django_rq`` to be used to enqueue job for
+
+            ``schedule_once`` method, schedule job once or reschedule when interval changes, if job already exists,
+            this will not do anything.
             """
             self.queue = queue
             self.connection = connection
@@ -69,26 +75,26 @@ def rq_job(func_or_queue, connection=None, *args, **kwargs):
                 else:
                     queue = self.queue
                 depends_on = kwargs.pop('depends_on', None)
-                f_name = '{}.{}'.format(f.__module__, f.__name__)
-                args2 = [get_serializer().dumps(f_name)]
-                args2 += [get_serializer().dumps(args)]
+                function_name = '{}.{}'.format(f.__module__, f.__name__)
+                encrypted_args = [secure_serializer.dumps(function_name)]
+                encrypted_args += [secure_serializer.dumps(args)]
 
-                args2 += [get_serializer().dumps(kwargs)]
-                return queue.enqueue_call(secure_job_proxy, args=args2, kwargs={},
+                encrypted_args += [secure_serializer.dumps(kwargs)]
+                return queue.enqueue_call(secure_job_proxy, args=encrypted_args, kwargs={},
                                           timeout=self.timeout, result_ttl=self.result_ttl,
                                           ttl=self.ttl, depends_on=depends_on)
 
             @wraps(f)
             def enqueue_at(target_date, scheduler_name='default', *args, **kwargs):
-                f_name = '{0}.{1}'.format(f.__module__, f.__name__)
-                args2 = [get_serializer().dumps(f_name)]
-                args2 += [get_serializer().dumps(args)]
+                function_name = '{0}.{1}'.format(f.__module__, f.__name__)
+                encrypted_args = [secure_serializer.dumps(function_name)]
+                encrypted_args += [secure_serializer.dumps(args)]
 
-                args2 += [get_serializer().dumps(kwargs)]
+                encrypted_args += [secure_serializer.dumps(kwargs)]
 
                 scheduler = django_rq.get_scheduler(scheduler_name)
                 proxy_method_name = '{}.{}'.format(secure_job_proxy.__module__, secure_job_proxy.__name__)
-                return scheduler.enqueue_at(target_date, proxy_method_name, *args2, **{})
+                return scheduler.enqueue_at(target_date, proxy_method_name, *encrypted_args, **{})
 
             @wraps(f)
             def schedule_once(interval, timeout=None):

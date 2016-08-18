@@ -18,22 +18,14 @@ from django_rq.queues import get_connection, get_queue_by_index
 from django_rq.settings import QUEUES_LIST
 from . import settings
 
-_serializer = None
-
-
-def get_serializer():
-    global _serializer
-    if not _serializer:
-        from . import serializer
-        _serializer = serializer.SecureSerializer(settings.get_secure_cache_opts())
-    return _serializer
+from .serializer import default_secure_serializer as secure_serializer
 
 
 def use_actual_name(job):
     if 'secure_redis.decorators.secure_job_proxy' != job.func_name:
         return
     encrypted_func_name = job.args[0]
-    actual_func_name = get_serializer().loads(encrypted_func_name)
+    actual_func_name = secure_serializer.loads(encrypted_func_name)
     job.func_name = actual_func_name
 
 
