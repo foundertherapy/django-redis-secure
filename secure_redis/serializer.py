@@ -22,4 +22,4 @@ class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
         val = self.crypter.decrypt(value)
         return super(SecureSerializer, self).loads(val)
 
-default_secure_serializer = SecureSerializer(settings.get_secure_cache_opts(True))
+default_secure_serializer = SecureSerializer(settings.get_secure_cache_opts())
