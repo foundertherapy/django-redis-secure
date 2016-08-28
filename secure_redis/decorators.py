@@ -29,7 +29,7 @@ def secure_job_proxy(*args, **kwargs):
     The is a proxy method, each method wanted to be stored securely, it will be directed to this method. With first
     argument is the encrypted original method name.
     :param args: Always three parameters, first is the encrypted method name, second is the encrypted actual args,
-    thid is the encrypted actual kwargs
+    third is the encrypted actual kwargs
     :return: actual method return value
     """
     actual_function_name = secure_serializer.loads(args[0])

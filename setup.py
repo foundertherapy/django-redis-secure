@@ -23,16 +23,16 @@ setup(
         'symmetrical encryption of cached values using the python cryptography library'
     ),
     url='https://github.com/foundertherapy/django-redis-secure/',
-    download_url='https://github.com/foundertherapy/django-redis-secure/archive/1.0.1.tar.gz',
+    download_url='https://github.com/foundertherapy/django-redis-secure/archive/1.1.0.tar.gz',
     author='Ghaleb Khaled',
     author_email='ghaleb@foundertherapy.co',
     install_requires=[
-        'Django==1.9.6',
+        'Django>=1.9.0',
         'cryptography>=1.4',
-        'django-redis==4.4.3',
-        'django-rq==0.9.1',
-        'rq==0.6.0',
-        'rq-scheduler==0.6.1',
+        'django-redis>=4.4.3',
+        'django-rq>=0.9.0',
+        'rq>=0.6.0',
+        'rq-scheduler>=0.6.1',
     ],
     keywords=['redis', 'django', 'secure', 'encryption', 'cache', 'rq', 'queue', 'scheduler'],
 )

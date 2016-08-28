@@ -1,7 +1,7 @@
 # Django secure redis
 Django caching plugin for django-redis that adds a Serializer class and configuration to support transparent,
 symmetrical encryption of cached values using the python cryptography library.
-This pluging also provide encryption for `django-rq` jobs by simply using `@secure_redis.rq_job` decorator on top of the job instead of `@django_rq.job`
+This plugin also provides encryption for django-rq jobs by simply using the `@secure_redis.rq_job` decorator to annotate the task method instead of using `@django_rq.job`
 
 # Important
 Before using this library, make sure that you really need it. By using it, put in mind:
@@ -86,11 +86,11 @@ class Command(BaseCommand):
 ```
 
 # Scheduler related usage
-You can use some extra functionality provided by this plugin, if secure cache settings are not added in the `default` settings, please make sure that you specify your secure cache settings name by setting `DJANGO_REDIS_SECURE_CACHE_NAME` settings. To enable these feature, this simply by adding `@secure_redis.rq_job` decorator on top of your task. By doing this you can get use of:
+This library also provides additional functionality for that encrypts the payload of RQ jobs. To make use of this functionality, first ensure that `DJANGO_REDIS_SECURE_CACHE_NAME` is defined in your settings (if not set, this setting will default to using the `default` cache). Once configured, replace all instances of the `django_rq.job` decorator with ``@secure_redis.rq_job`. The ``@secure_redis.rq_job` provides the following functionality:
 
-1. `delay` method, so you can use it like `my_job.delay()`. This method is same as `django_rq.job.delay`
-2. `enqueue_at` method, called as `my_job.enqueue_at()`. This is an exposed method of `django_rq.Scheduler.enqueue_at`
-3. `schedule_once` method, called as `my_job.schedule_once()`. Same as `django_rq.Scheduler.schedule` but will check if method already exists so it will not added twice.
+1. A `delay` method, which can be used when calling the task method (ex: `my_task.delay()`). This method has the same functionality as `django_rq.job.delay`
+2. An `enqueue_at` method, which can be used when calling the task method (ex: `my_job.enqueue_at()`). This method has the same functionality as `django_rq.Scheduler.enqueue_at`
+3. A `schedule_once` method, which can be used when calling the task method (ex: `my_job.schedule_once()`). This method has the same functionality as `django_rq.Scheduler.schedule`, but will check if the method already exists and will not add it to the scheduler a second time.
 
 ## Important:
-When using `secure_redis.rq_job` decorator, this will direct your method to a proxy method which will result in changing method name in admin page, so if you want to see the actual method name, you can use `secure_redis.urls` instead of `django_rq.urls`, this will take care of displaying actual method name.
+When using the `@secure_redis.rq_job decorator`, the method name displayed in the Django admin will be that of the wrapped proxy method instead of the actual task method name. If you want to see the actual task method name in the Django admin, you must use `secure_redis.urls` instead of `django_rq.urls` when installing RQ into the Django admin in your `urls.py` file.
