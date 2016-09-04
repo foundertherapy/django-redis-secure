@@ -8,8 +8,6 @@ from django.conf import settings as global_settings
 
 import rq.utils
 from rq.compat import string_types
-import django_rq
-from django_rq.queues import get_queue
 from rq.defaults import DEFAULT_RESULT_TTL
 from rq.queue import Queue
 
@@ -39,6 +37,8 @@ def secure_job_proxy(*args, **kwargs):
 
 
 def rq_job(func_or_queue, connection=None, *args, **kwargs):
+    import django_rq
+    from django_rq.queues import get_queue
     class _rq_job(object):
         def __init__(self, queue, connection=None, timeout=None,
                      result_ttl=DEFAULT_RESULT_TTL, ttl=None):
