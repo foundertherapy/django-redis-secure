@@ -22,7 +22,7 @@ from .serializer import default_secure_serializer as secure_serializer
 
 
 def use_actual_name(job):
-    if 'secure_redis.decorators.secure_job_proxy' != job.func_name:
+    if 'secure_redis.secure_rq.secure_job_proxy' != job.func_name:
         return
     encrypted_func_name = job.args[0]
     actual_func_name = secure_serializer.loads(encrypted_func_name)
