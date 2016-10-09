@@ -35,7 +35,6 @@ setup(
     install_requires=[
         'Django>=1.9',
         'cryptography>=0.8.2',
-        'django-rq>=0.9.1',
         'rq>=0.6.0',
         'rq-scheduler>=0.6.1',
         'django-redis',
