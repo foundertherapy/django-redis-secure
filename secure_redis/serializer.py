@@ -1,10 +1,15 @@
 from __future__ import unicode_literals
 
 from cryptography.fernet import Fernet
+import logging
 
+import django.conf
 import django_redis.serializers.pickle
 
 import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
@@ -22,4 +27,10 @@ class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
         val = self.crypter.decrypt(value)
         return super(SecureSerializer, self).loads(val)
 
-default_secure_serializer = SecureSerializer(settings.get_secure_cache_opts())
+
+opts = settings.secure_cache_options_settings
+if not opts and django.conf.settings.DEBUG:
+    default_secure_serializer = django_redis.serializers.pickle.PickleSerializer({})
+    logger.warn("Secure redis OPTIONS not defined, using pickle serializer for local")
+else:
+    default_secure_serializer = SecureSerializer(opts)
