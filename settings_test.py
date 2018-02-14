@@ -1,9 +1,9 @@
 from __future__ import unicode_literals
 import os
-
+import platform
 
 BASE_DIR = os.path.dirname(__file__)
-APPSERVER = os.uname()[1]
+APPSERVER = platform.uname()[1]
 
 SITE_ID = 1
 INTERNAL_IPS = ('127.0.0.1', )
