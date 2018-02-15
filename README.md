@@ -93,4 +93,6 @@ This library also provides additional functionality for that encrypts the payloa
 3. A `schedule_once` method, which can be used when calling the task method (ex: `my_job.schedule_once()`). This method has the same functionality as `django_rq.Scheduler.schedule`, but will check if the method already exists and will not add it to the scheduler a second time.
 
 ## Important:
-When using the `@secure_redis.secure_rq.job decorator`, the method name displayed in the Django admin will be that of the wrapped proxy method instead of the actual task method name. If you want to see the actual task method name in the Django admin, you must use `secure_redis.urls` instead of `django_rq.urls` when installing RQ into the Django admin in your `urls.py` file.
+* When using the `@secure_redis.secure_rq.job decorator`, the method name displayed in the Django admin will be that of the wrapped proxy method instead of the actual task method name. If you want to see the actual task method name in the Django admin, you must use `secure_redis.urls` instead of `django_rq.urls` when installing RQ into the Django admin in your `urls.py` file.
+
+* If not planning to use django-rq functionality, setting `DJANGO_REDIS_SECURE_CACHE_NAME = None` will stop django-secure-redis from initialising the cache for django-rq. By default django-secure-redis will look for the "default" cache name and if "default" has not been configured as a secure cache it will error.
