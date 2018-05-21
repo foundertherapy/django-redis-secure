@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 
 import django_redis.serializers.pickle
 
-import settings
+from . import settings
 
 
 class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
@@ -21,5 +21,6 @@ class SecureSerializer(django_redis.serializers.pickle.PickleSerializer):
     def loads(self, value):
         val = self.crypter.decrypt(value)
         return super(SecureSerializer, self).loads(val)
+
 
 default_secure_serializer = SecureSerializer(settings.get_secure_cache_opts())
