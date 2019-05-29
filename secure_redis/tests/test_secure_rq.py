@@ -27,7 +27,7 @@ class SecureRedisRQTestCase(django.test.TestCase):
         kwargs = {'param1': 'A', 'param2': 'B', }
         dummy.delay(*args, **kwargs)
         enqueue_call_method.assert_called_once()
-        self.assertEqual('secure_job_proxy', enqueue_call_method.call_args[0][0].func_name)
+        self.assertEqual('secure_job_proxy', enqueue_call_method.call_args[0][0].__name__)
         # Get the intersection between sent paramters and actual ones and ensure there are no intersection
         self.assertFalse([i for i in args if i in enqueue_call_method.call_args[1]['args']])
         self.assertFalse([i for i in kwargs if i in enqueue_call_method.call_args[1]['args']])
