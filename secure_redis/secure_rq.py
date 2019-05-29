@@ -1,4 +1,3 @@
-from __future__ import (division, unicode_literals)
 from functools import wraps
 from collections import defaultdict
 import logging

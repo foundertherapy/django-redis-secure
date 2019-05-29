@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import django.test
 from django.core import cache
 
