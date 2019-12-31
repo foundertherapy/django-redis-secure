@@ -141,14 +141,7 @@ def job(func_or_queue, connection=None, *args, **kwargs):
             func = None
             queue = func_or_queue
 
-        try:
-            from django.utils import six
-            string_type = six.string_types
-        except ImportError:
-            # for django lt v1.5 and python 2
-            string_type = basestring
-
-        if isinstance(queue, string_type):
+        if isinstance(queue, str):
             try:
                 queue = get_queue(queue)
                 if connection is None:
