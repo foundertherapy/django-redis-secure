@@ -56,8 +56,6 @@ you are free to handle this case as you want, we would suggest to use django man
 5. Make sure either to delete old keys or make sure your redis can holds the new values
 6. Code sinppet for sample command is shown below:
 ```
-from __future__ import unicode_literals
-
 from django.core.management.base import BaseCommand
 from django.core import cache
 

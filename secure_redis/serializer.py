@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from cryptography.fernet import Fernet
 
 import django_redis.serializers.pickle

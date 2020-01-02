@@ -1,4 +1,3 @@
-from __future__ import (division, unicode_literals)
 from functools import wraps
 from collections import defaultdict
 import logging
@@ -114,14 +113,14 @@ def job(func_or_queue, connection=None, *args, **kwargs):
                         timeout = 360
 
                 if f not in functions or interval not in functions[f] or functions[f][1] != timeout or len(functions[f]) > 2:
-                    logger.info('Rescheduling job {} with interval: {}s'.format(f.func_name, interval))
+                    logger.info('Rescheduling job {} with interval: {}s'.format(f.__name__, interval))
                     # clear all scheduled jobs for this function
                     map(rq_scheduler.cancel, filter(lambda x: x.func==f, jobs))
 
                     # schedule with new interval and timeout
                     return rq_scheduler.schedule(datetime.datetime.now(), f, interval=interval, timeout=timeout)
                 else:
-                    logger.info('Job already scheduled every {}s: {}'.format(interval, f.func_name))
+                    logger.info('Job already scheduled every {}s: {}'.format(interval, f.__name__))
             f.enqueue_at = enqueue_at
             f.delay = delay
             f.schedule_once = schedule_once
@@ -142,14 +141,7 @@ def job(func_or_queue, connection=None, *args, **kwargs):
             func = None
             queue = func_or_queue
 
-        try:
-            from django.utils import six
-            string_type = six.string_types
-        except ImportError:
-            # for django lt v1.5 and python 2
-            string_type = basestring
-
-        if isinstance(queue, string_type):
+        if isinstance(queue, str):
             try:
                 queue = get_queue(queue)
                 if connection is None:

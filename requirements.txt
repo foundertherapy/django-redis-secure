@@ -1,8 +1,8 @@
 django-redis
 cryptography
-Django==1.9.6
+Django==2.2.1
 hiredis
 mock
-django-rq==0.9.1
-rq==0.6.0
-rq-scheduler==0.6.1
+django-rq==2.0
+rq==1.0
+rq-scheduler==0.9
