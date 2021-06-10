@@ -1,6 +1,6 @@
 django-redis
 cryptography
-Django==1.9.6
+Django==2.2.24
 hiredis
 mock
 django-rq==0.9.1
